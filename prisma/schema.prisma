@@ -1,0 +1,133 @@
+// Esquema de datos del sistema de gestión de clientes y proyectos.
+// Convenciones:
+//  - Nombres de modelos y campos en español (lenguaje del dominio).
+//  - Tablas mapeadas en snake_case plural para la base de datos.
+//  - Toda entidad de negocio tiene baja lógica (activo + eliminadoEn).
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/// Roles disponibles para el control de acceso basado en roles (RBAC).
+enum Rol {
+  ADMIN
+  OPERADOR
+  CLIENTE
+}
+
+enum EstadoProyecto {
+  PLANIFICADO
+  EN_CURSO
+  PAUSADO
+  FINALIZADO
+  CANCELADO
+}
+
+enum EstadoTarea {
+  PENDIENTE
+  EN_PROGRESO
+  BLOQUEADA
+  COMPLETADA
+}
+
+enum Prioridad {
+  BAJA
+  MEDIA
+  ALTA
+}
+
+model Usuario {
+  id            String   @id @default(cuid())
+  nombre        String
+  email         String   @unique
+  passwordHash  String
+  rol           Rol      @default(OPERADOR)
+  activo        Boolean  @default(true)
+  creadoEn      DateTime @default(now())
+  actualizadoEn DateTime @updatedAt
+
+  // Solo los usuarios con rol CLIENTE se vinculan a un cliente del portal.
+  clienteId String?  @unique
+  cliente   Cliente? @relation(fields: [clienteId], references: [id], onDelete: SetNull)
+
+  proyectosCreados Proyecto[] @relation("ProyectoCreador")
+  tareasAsignadas  Tarea[]    @relation("TareaResponsable")
+
+  @@index([rol, activo])
+  @@map("usuarios")
+}
+
+model Cliente {
+  id            String    @id @default(cuid())
+  nombre        String
+  cuit          String?   @unique
+  email         String    @unique
+  telefono      String?
+  direccion     String?
+  notas         String?
+  activo        Boolean   @default(true)
+  eliminadoEn   DateTime?
+  creadoEn      DateTime  @default(now())
+  actualizadoEn DateTime  @updatedAt
+
+  proyectos Proyecto[]
+  usuarios  Usuario[]
+
+  @@index([activo, nombre])
+  @@map("clientes")
+}
+
+model Proyecto {
+  id              String          @id @default(cuid())
+  nombre          String
+  descripcion     String?
+  estado          EstadoProyecto  @default(PLANIFICADO)
+  presupuesto     Decimal?        @db.Decimal(12, 2)
+  fechaInicio     DateTime        @default(now())
+  fechaFinEstimada DateTime?
+  activo          Boolean         @default(true)
+  eliminadoEn     DateTime?
+  creadoEn        DateTime        @default(now())
+  actualizadoEn   DateTime        @updatedAt
+
+  clienteId   String
+  cliente     Cliente  @relation(fields: [clienteId], references: [id], onDelete: Restrict)
+  creadoPorId String
+  creadoPor   Usuario  @relation("ProyectoCreador", fields: [creadoPorId], references: [id], onDelete: Restrict)
+
+  tareas Tarea[]
+
+  @@index([clienteId, estado])
+  @@index([activo])
+  @@index([creadoPorId])
+  @@map("proyectos")
+}
+
+model Tarea {
+  id             String       @id @default(cuid())
+  titulo         String
+  descripcion    String?
+  estado         EstadoTarea  @default(PENDIENTE)
+  prioridad      Prioridad    @default(MEDIA)
+  fechaLimite    DateTime?
+  horasEstimadas Decimal?     @db.Decimal(5, 2)
+  activo         Boolean      @default(true)
+  eliminadoEn    DateTime?
+  creadoEn       DateTime     @default(now())
+  actualizadoEn  DateTime     @updatedAt
+
+  proyectoId    String
+  proyecto      Proyecto @relation(fields: [proyectoId], references: [id], onDelete: Cascade)
+  responsableId String?
+  responsable   Usuario? @relation("TareaResponsable", fields: [responsableId], references: [id], onDelete: SetNull)
+
+  @@index([proyectoId, estado])
+  @@index([responsableId, estado])
+  @@index([activo])
+  @@map("tareas")
+}

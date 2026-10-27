@@ -140,6 +140,7 @@ Verificar que el sistema **Nexo** cumple sus reglas de negocio críticas, que el
 | BUG-03 | Las pruebas de integración borraban datos de desarrollo porque `prisma dev` ignora el nombre de base de la URL. | Ejecución de la suite | Instancia aislada para tests + guardas por contenido en `db:test:prepare` y en la propia suite. |
 | BUG-04 | CSP bloqueaba `eval()` de React en desarrollo. | Humo (consola) | `'unsafe-eval'` sólo en `NODE_ENV !== "production"`. |
 | BUG-05 | Swagger UI no cargaba por la CSP (script de CDN). | Humo (SM-13) | Bundle servido desde `public/docs/swagger-ui/`. |
+| BUG-06 | ESLint reportaba un warning por la exportación anónima de la configuración de Commitlint. | CI (lint) | Se asigna la configuración a una constante antes de exportarla. |
 
 ## 8. Ejecución
 

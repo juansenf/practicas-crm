@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Dependencias copiadas a public/ (Swagger UI) y código generado.
+    "public/**",
+    "coverage/**",
+    "src/generated/**",
   ]),
 ]);
 

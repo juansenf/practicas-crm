@@ -30,7 +30,7 @@ Navegador ──HTTPS──► Vercel (Next.js) ──TLS──► Neon (Postgre
 2. En Vercel: **Add New → Project → Import Git Repository**.
 3. Configuración del proyecto:
    - **Framework preset**: Next.js (detectado automáticamente).
-   - **Build command**: `npm run db:deploy && npm run build` (aplica migraciones antes de compilar).
+   - **Build command**: Vercel usa el script `vercel-build` del repositorio (`prisma migrate deploy && next build`), que aplica las migraciones antes de compilar. No hace falta configurarlo a mano.
    - **Install command**: `npm install` (ejecuta `postinstall` → `prisma generate`).
 4. Variables de entorno (Production y Preview):
 

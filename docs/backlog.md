@@ -1,6 +1,6 @@
 # Backlog e historias de usuario
 
-Tablero Kanban con cinco columnas: **Backlog → Por hacer → En curso → En revisión → Hecho**.
+Tablero Kanban con cinco columnas: **Backlog → Por hacer → En curso → En revisión → Hecho**. El estado consolidado y la trazabilidad historia → rama → commits están en [`kanban.md`](kanban.md).
 
 Convenciones:
 

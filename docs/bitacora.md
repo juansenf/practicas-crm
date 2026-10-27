@@ -105,9 +105,10 @@ Registro cronológico de las sesiones de trabajo: objetivo, actividades, decisio
 
 - Detección de un problema grave: `prisma dev` ignora el nombre de base de la URL, por lo que las pruebas de integración borraban los datos de desarrollo (BUG-03). Solución: instancia aislada (`npx prisma dev -d -n test`) + guardas por contenido en `scripts/prepare-test-db.mjs` y en la suite.
 - Verificación de build, lint, typecheck y 53 pruebas en verde.
-- Documentación: README, arquitectura, ADR, backlog, plan de pruebas, seguridad, despliegue y contribución.
+- Historial de commits organizado por ramas (`feature/`, `bugfix/`, `docs/`, `ci/`) con merges `--no-ff` y mensajes validados con Commitlint.
+- Documentación: README, arquitectura, ADR, backlog, tablero Kanban, plan de pruebas, seguridad, despliegue y contribución.
 - Configuración de Commitlint y GitHub Actions.
-- Preparación del historial de commits por rama (`feature/`, `docs/`, `chore/`).
+- Preparación del historial de commits por rama (`feature/`, `bugfix/`, `docs/`, `ci/`).
 
 **Pendiente:** creación del repositorio remoto, protección de `main` y despliegue en Vercel + Neon.
 
@@ -147,3 +148,4 @@ Registro cronológico de las sesiones de trabajo: objetivo, actividades, decisio
 | BUG-03 | 2026-10-27 | Las pruebas de integración borraban la base de desarrollo | Corregido |
 | BUG-04 | 2026-10-26 | CSP bloqueaba React en desarrollo | Corregido |
 | BUG-05 | 2026-10-26 | Swagger UI bloqueado por CSP | Corregido |
+| BUG-06 | 2026-10-27 | Warning de ESLint por export anónimo en Commitlint | Corregido |

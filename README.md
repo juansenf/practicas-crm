@@ -364,6 +364,7 @@ docs/                      ADR, backlog, bitácora, plan de pruebas, despliegue
 - [Arquitectura y decisiones](docs/arquitectura.md)
 - [ADR (Architecture Decision Records)](docs/adr/)
 - [Backlog e historias de usuario](docs/backlog.md)
+- [Tablero Kanban](docs/kanban.md)
 - [Bitácora de desarrollo](docs/bitacora.md)
 - [Plan de pruebas](docs/plan-de-pruebas.md)
 - [Seguridad](docs/seguridad.md)

@@ -1,0 +1,81 @@
+name: Reporte de error
+description: Documentar un defecto con pasos para reproducirlo.
+title: "bug: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Gracias por reportar. Cuanto más preciso sea el reporte, más rápido se corrige.
+        **No incluyas credenciales reales ni datos personales.**
+
+  - type: textarea
+    id: descripcion
+    attributes:
+      label: Descripción
+      description: ¿Qué ocurre?
+    validations:
+      required: true
+
+  - type: textarea
+    id: pasos
+    attributes:
+      label: Pasos para reproducir
+      placeholder: |
+        1. Iniciar sesión como ADMIN
+        2. Ir a Clientes → Nuevo cliente
+        3. ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: esperado
+    attributes:
+      label: Comportamiento esperado
+    validations:
+      required: true
+
+  - type: textarea
+    id: obtenido
+    attributes:
+      label: Comportamiento obtenido
+    validations:
+      required: true
+
+  - type: dropdown
+    id: rol
+    attributes:
+      label: Rol con el que se reprodujo
+      options:
+        - ADMIN
+        - OPERADOR
+        - CLIENTE
+        - Sin sesión
+    validations:
+      required: true
+
+  - type: dropdown
+    id: entorno
+    attributes:
+      label: Entorno
+      options:
+        - Local (npm run dev)
+        - Build de producción (npm run build && npm start)
+        - Desplegado en la nube
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidencia
+    attributes:
+      label: Evidencia
+      description: Mensajes de consola/red, capturas o respuesta de la API (sin datos sensibles).
+    validations:
+      required: false
+
+  - type: textarea
+    id: contexto
+    attributes:
+      label: Contexto adicional
+    validations:
+      required: false

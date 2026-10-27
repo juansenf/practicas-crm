@@ -2,7 +2,7 @@
  * Reglas de Conventional Commits.
  * Se validan en CI y, opcionalmente, en local con `npm run lint:commits`.
  */
-export default {
+const config = {
   extends: ["@commitlint/config-conventional"],
   rules: {
     "header-max-length": [2, "always", 100],
@@ -45,3 +45,5 @@ export default {
     ],
   },
 };
+
+export default config;

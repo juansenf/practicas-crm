@@ -73,6 +73,8 @@ vercel git connect     # debe responder "Connected"
 vercel inspect https://practicas-crm.vercel.app
 ```
 
+> **Riesgo conocido:** los *Preview Deployments* de los PR usan las mismas variables de entorno que producción (`DATABASE_URL` apunta a Neon), por lo que un PR que agregue una migración la aplicaría sobre la base real. Mientras el proyecto sea de una sola persona se acepta; en un equipo se resuelve con una base de *preview* aparte o ejecutando `prisma migrate deploy` solo cuando `VERCEL_ENV=production`.
+
 Deploy manual de emergencia (si el pipeline no está disponible):
 
 ```bash

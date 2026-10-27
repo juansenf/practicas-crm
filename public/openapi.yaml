@@ -1,0 +1,970 @@
+openapi: 3.1.0
+info:
+  title: API Nexo · Gestión de clientes y proyectos
+  version: 1.0.0
+  summary: API REST del proyecto integrador de Práctica Profesionalizante II.
+  description: |
+    API RESTful del sistema **Nexo** para la gestión de clientes, proyectos y tareas.
+
+    ## Autenticación
+    La autenticación se realiza con un **JWT firmado (HS256)** almacenado en una cookie
+    `HttpOnly` llamada `sesion`. El navegador la envía automáticamente en cada petición.
+    Para probar la API desde Swagger UI, primero ejecutá `POST /api/v1/auth/login` con
+    credenciales válidas; la cookie quedará guardada y se reutilizará en el resto de
+    las operaciones.
+
+    ## Roles (RBAC)
+    - **ADMIN**: acceso total.
+    - **OPERADOR**: gestiona clientes, proyectos y tareas (no administra usuarios).
+    - **CLIENTE**: solo lectura de los proyectos y tareas de su propia empresa.
+
+    ## Formato de errores
+    Todas las respuestas de error comparten la misma estructura:
+    ```json
+    {
+      "error": {
+        "codigo": "DATOS_INVALIDOS",
+        "mensaje": "Revisá los datos ingresados.",
+        "detalles": { "email": ["Ya existe un cliente registrado con ese email."] }
+      }
+    }
+    ```
+
+    ## Códigos de error habituales
+    | Código | HTTP | Significado |
+    |---|---|---|
+    | `DATOS_INVALIDOS` | 422 | Falló la validación de entrada |
+    | `NO_AUTENTICADO` | 401 | No hay sesión válida |
+    | `SIN_PERMISOS` | 403 | El rol del usuario no permite la operación |
+    | `NO_ENCONTRADO` | 404 | El recurso no existe |
+    | `CONFLICTO` | 409 | Regla de negocio o unicidad violada |
+    | `DEMASIADOS_INTENTOS` | 429 | Rate limit de login excedido |
+    | `ERROR_INTERNO` | 500 | Error no controlado |
+servers:
+  - url: http://localhost:3000
+    description: Desarrollo local
+  - url: https://practicas-crm.vercel.app
+    description: Producción (reemplazar por la URL real del despliegue)
+tags:
+  - name: Autenticación
+    description: Registro, login, logout y sesión actual.
+  - name: Clientes
+    description: Padrón de clientes (solo ADMIN y OPERADOR).
+  - name: Proyectos
+    description: Proyectos asociados a un cliente, con ciclo de vida.
+  - name: Tareas
+    description: Tareas de un proyecto, con prioridad y responsable.
+security:
+  - cookieAuth: []
+paths:
+  /api/v1/auth/login:
+    post:
+      tags: [Autenticación]
+      summary: Iniciar sesión
+      description: Valida credenciales y setea la cookie de sesión. Tiene rate limit de 5 intentos cada 15 minutos por email.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginInput"
+      responses:
+        "200":
+          description: Sesión iniciada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  usuario:
+                    $ref: "#/components/schemas/UsuarioSesion"
+        "401":
+          $ref: "#/components/responses/NoAutenticado"
+        "403":
+          description: Cuenta deshabilitada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "422":
+          $ref: "#/components/responses/DatosInvalidos"
+        "429":
+          description: Demasiados intentos fallidos
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/v1/auth/registro:
+    post:
+      tags: [Autenticación]
+      summary: Registro público de cliente
+      description: Crea la empresa (Cliente) y su usuario con rol CLIENTE en una transacción, e inicia sesión.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegistroInput"
+      responses:
+        "201":
+          description: Cuenta creada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  usuario:
+                    $ref: "#/components/schemas/UsuarioSesion"
+        "409":
+          $ref: "#/components/responses/Conflicto"
+        "422":
+          $ref: "#/components/responses/DatosInvalidos"
+
+  /api/v1/auth/logout:
+    post:
+      tags: [Autenticación]
+      summary: Cerrar sesión
+      responses:
+        "204":
+          description: Cookie de sesión eliminada
+
+  /api/v1/auth/me:
+    get:
+      tags: [Autenticación]
+      summary: Usuario autenticado
+      responses:
+        "200":
+          description: Datos de la sesión actual
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  usuario:
+                    $ref: "#/components/schemas/UsuarioSesion"
+        "401":
+          $ref: "#/components/responses/NoAutenticado"
+
+  /api/v1/clientes:
+    get:
+      tags: [Clientes]
+      summary: Listar clientes
+      description: Devuelve el padrón paginado. Solo ADMIN y OPERADOR.
+      parameters:
+        - $ref: "#/components/parameters/Q"
+        - name: activo
+          in: query
+          description: Filtra por estado lógico.
+          schema:
+            type: boolean
+        - $ref: "#/components/parameters/Pagina"
+        - $ref: "#/components/parameters/PorPagina"
+      responses:
+        "200":
+          description: Listado paginado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginadoClientes"
+        "401":
+          $ref: "#/components/responses/NoAutenticado"
+        "403":
+          $ref: "#/components/responses/SinPermisos"
+    post:
+      tags: [Clientes]
+      summary: Crear cliente
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ClienteInput"
+      responses:
+        "201":
+          description: Cliente creado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cliente"
+        "409":
+          $ref: "#/components/responses/Conflicto"
+        "422":
+          $ref: "#/components/responses/DatosInvalidos"
+
+  /api/v1/clientes/{id}:
+    parameters:
+      - $ref: "#/components/parameters/Id"
+    get:
+      tags: [Clientes]
+      summary: Obtener cliente
+      responses:
+        "200":
+          description: Ficha del cliente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cliente"
+        "403":
+          $ref: "#/components/responses/SinPermisos"
+        "404":
+          $ref: "#/components/responses/NoEncontrado"
+    patch:
+      tags: [Clientes]
+      summary: Actualizar cliente
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ClienteUpdateInput"
+      responses:
+        "200":
+          description: Cliente actualizado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cliente"
+        "409":
+          $ref: "#/components/responses/Conflicto"
+        "422":
+          $ref: "#/components/responses/DatosInvalidos"
+    delete:
+      tags: [Clientes]
+      summary: Dar de baja un cliente (baja lógica)
+      description: Falla con 409 si el cliente tiene proyectos activos.
+      responses:
+        "200":
+          description: Cliente dado de baja
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cliente"
+        "409":
+          $ref: "#/components/responses/Conflicto"
+
+  /api/v1/clientes/{id}/reactivar:
+    parameters:
+      - $ref: "#/components/parameters/Id"
+    post:
+      tags: [Clientes]
+      summary: Reactivar un cliente dado de baja
+      responses:
+        "200":
+          description: Cliente reactivado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cliente"
+
+  /api/v1/proyectos:
+    get:
+      tags: [Proyectos]
+      summary: Listar proyectos
+      description: Un usuario CLIENTE solo ve los proyectos de su empresa, sin importar los filtros enviados.
+      parameters:
+        - $ref: "#/components/parameters/Q"
+        - name: estado
+          in: query
+          schema:
+            $ref: "#/components/schemas/EstadoProyecto"
+        - name: clienteId
+          in: query
+          schema:
+            type: string
+        - $ref: "#/components/parameters/Pagina"
+        - $ref: "#/components/parameters/PorPagina"
+      responses:
+        "200":
+          description: Listado paginado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginadoProyectos"
+        "401":
+          $ref: "#/components/responses/NoAutenticado"
+    post:
+      tags: [Proyectos]
+      summary: Crear proyecto
+      description: Solo ADMIN y OPERADOR. El cliente debe existir y estar activo.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProyectoInput"
+      responses:
+        "201":
+          description: Proyecto creado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Proyecto"
+        "409":
+          $ref: "#/components/responses/Conflicto"
+        "422":
+          $ref: "#/components/responses/DatosInvalidos"
+
+  /api/v1/proyectos/{id}:
+    parameters:
+      - $ref: "#/components/parameters/Id"
+    get:
+      tags: [Proyectos]
+      summary: Obtener proyecto
+      responses:
+        "200":
+          description: Detalle del proyecto
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Proyecto"
+        "403":
+          $ref: "#/components/responses/SinPermisos"
+        "404":
+          $ref: "#/components/responses/NoEncontrado"
+    patch:
+      tags: [Proyectos]
+      summary: Actualizar proyecto
+      description: No se puede modificar un proyecto FINALIZADO o CANCELADO.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProyectoUpdateInput"
+      responses:
+        "200":
+          description: Proyecto actualizado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Proyecto"
+        "409":
+          $ref: "#/components/responses/Conflicto"
+        "422":
+          $ref: "#/components/responses/DatosInvalidos"
+    delete:
+      tags: [Proyectos]
+      summary: Dar de baja un proyecto y sus tareas (baja lógica)
+      description: Falla con 409 si hay tareas en progreso.
+      responses:
+        "200":
+          description: Proyecto dado de baja
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Proyecto"
+        "409":
+          $ref: "#/components/responses/Conflicto"
+
+  /api/v1/proyectos/{id}/estado:
+    parameters:
+      - $ref: "#/components/parameters/Id"
+    patch:
+      tags: [Proyectos]
+      summary: Cambiar estado del proyecto
+      description: |
+        Transiciones permitidas:
+        - `PLANIFICADO` → `EN_CURSO` | `CANCELADO`
+        - `EN_CURSO` → `PAUSADO` | `FINALIZADO` | `CANCELADO`
+        - `PAUSADO` → `EN_CURSO` | `CANCELADO`
+        - `FINALIZADO` y `CANCELADO` son terminales.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [estado]
+              properties:
+                estado:
+                  $ref: "#/components/schemas/EstadoProyecto"
+      responses:
+        "200":
+          description: Estado actualizado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Proyecto"
+        "409":
+          $ref: "#/components/responses/Conflicto"
+
+  /api/v1/tareas:
+    get:
+      tags: [Tareas]
+      summary: Listar tareas
+      description: Un usuario CLIENTE solo ve las tareas de los proyectos de su empresa.
+      parameters:
+        - $ref: "#/components/parameters/Q"
+        - name: estado
+          in: query
+          schema:
+            $ref: "#/components/schemas/EstadoTarea"
+        - name: prioridad
+          in: query
+          schema:
+            $ref: "#/components/schemas/Prioridad"
+        - name: proyectoId
+          in: query
+          schema:
+            type: string
+        - name: responsableId
+          in: query
+          schema:
+            type: string
+        - $ref: "#/components/parameters/Pagina"
+        - $ref: "#/components/parameters/PorPagina"
+      responses:
+        "200":
+          description: Listado paginado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginadoTareas"
+        "401":
+          $ref: "#/components/responses/NoAutenticado"
+    post:
+      tags: [Tareas]
+      summary: Crear tarea
+      description: Solo ADMIN y OPERADOR. El proyecto debe estar activo y no finalizado/cancelado.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TareaInput"
+      responses:
+        "201":
+          description: Tarea creada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tarea"
+        "409":
+          $ref: "#/components/responses/Conflicto"
+        "422":
+          $ref: "#/components/responses/DatosInvalidos"
+
+  /api/v1/tareas/{id}:
+    parameters:
+      - $ref: "#/components/parameters/Id"
+    get:
+      tags: [Tareas]
+      summary: Obtener tarea
+      responses:
+        "200":
+          description: Detalle de la tarea
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tarea"
+        "403":
+          $ref: "#/components/responses/SinPermisos"
+        "404":
+          $ref: "#/components/responses/NoEncontrado"
+    patch:
+      tags: [Tareas]
+      summary: Actualizar tarea
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TareaUpdateInput"
+      responses:
+        "200":
+          description: Tarea actualizada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tarea"
+        "409":
+          $ref: "#/components/responses/Conflicto"
+        "422":
+          $ref: "#/components/responses/DatosInvalidos"
+    delete:
+      tags: [Tareas]
+      summary: Dar de baja una tarea (baja lógica)
+      responses:
+        "200":
+          description: Tarea dada de baja
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tarea"
+
+  /api/v1/tareas/{id}/estado:
+    parameters:
+      - $ref: "#/components/parameters/Id"
+    patch:
+      tags: [Tareas]
+      summary: Cambiar estado de la tarea
+      description: |
+        Transiciones permitidas:
+        - `PENDIENTE` → `EN_PROGRESO` | `BLOQUEADA` | `COMPLETADA`
+        - `EN_PROGRESO` → `PENDIENTE` | `BLOQUEADA` | `COMPLETADA`
+        - `BLOQUEADA` → `PENDIENTE` | `EN_PROGRESO`
+        - `COMPLETADA` → `EN_PROGRESO`
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [estado]
+              properties:
+                estado:
+                  $ref: "#/components/schemas/EstadoTarea"
+      responses:
+        "200":
+          description: Estado actualizado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tarea"
+        "409":
+          $ref: "#/components/responses/Conflicto"
+
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sesion
+      description: JWT de sesión (HttpOnly, SameSite=Lax).
+
+  parameters:
+    Id:
+      name: id
+      in: path
+      required: true
+      description: Identificador CUID de la entidad.
+      schema:
+        type: string
+    Q:
+      name: q
+      in: query
+      description: Búsqueda textual (según entidad).
+      schema:
+        type: string
+        maxLength: 100
+    Pagina:
+      name: pagina
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+    PorPagina:
+      name: porPagina
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 10
+
+  responses:
+    DatosInvalidos:
+      description: Error de validación
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NoAutenticado:
+      description: Sesión ausente o inválida
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    SinPermisos:
+      description: El rol del usuario no permite la operación
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NoEncontrado:
+      description: El recurso no existe
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    Conflicto:
+      description: Regla de negocio o restricción de unicidad
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+  schemas:
+    Rol:
+      type: string
+      enum: [ADMIN, OPERADOR, CLIENTE]
+    EstadoProyecto:
+      type: string
+      enum: [PLANIFICADO, EN_CURSO, PAUSADO, FINALIZADO, CANCELADO]
+    EstadoTarea:
+      type: string
+      enum: [PENDIENTE, EN_PROGRESO, BLOQUEADA, COMPLETADA]
+    Prioridad:
+      type: string
+      enum: [BAJA, MEDIA, ALTA]
+
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [codigo, mensaje]
+          properties:
+            codigo:
+              type: string
+              example: DATOS_INVALIDOS
+            mensaje:
+              type: string
+              example: Revisá los datos ingresados.
+            detalles:
+              type: object
+              additionalProperties:
+                type: array
+                items:
+                  type: string
+              example:
+                email: ["Ingresá un email válido."]
+
+    LoginInput:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+          example: admin@nexo.local
+        password:
+          type: string
+          example: Demo12345!
+
+    RegistroInput:
+      type: object
+      required: [nombre, empresa, email, password]
+      properties:
+        nombre:
+          type: string
+          minLength: 2
+          maxLength: 100
+        empresa:
+          type: string
+          minLength: 2
+          maxLength: 100
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 10
+          maxLength: 72
+          description: Al menos una letra y un número.
+
+    UsuarioSesion:
+      type: object
+      properties:
+        id:
+          type: string
+        nombre:
+          type: string
+        rol:
+          $ref: "#/components/schemas/Rol"
+        clienteId:
+          type: [string, "null"]
+
+    Cliente:
+      type: object
+      properties:
+        id:
+          type: string
+        nombre:
+          type: string
+        cuit:
+          type: [string, "null"]
+        email:
+          type: string
+        telefono:
+          type: [string, "null"]
+        direccion:
+          type: [string, "null"]
+        notas:
+          type: [string, "null"]
+        activo:
+          type: boolean
+        creadoEn:
+          type: string
+          format: date-time
+        actualizadoEn:
+          type: string
+          format: date-time
+
+    ClienteInput:
+      type: object
+      required: [nombre, email]
+      properties:
+        nombre:
+          type: string
+          minLength: 2
+          maxLength: 100
+        email:
+          type: string
+          format: email
+        cuit:
+          type: string
+          description: 11 dígitos, con o sin guiones.
+          example: 30-71234567-8
+        telefono:
+          type: string
+          maxLength: 30
+          example: +54 11 4555-1234
+        direccion:
+          type: string
+          maxLength: 200
+        notas:
+          type: string
+          maxLength: 1000
+
+    ClienteUpdateInput:
+      allOf:
+        - $ref: "#/components/schemas/ClienteInput"
+      description: Todos los campos son opcionales, pero se exige al menos uno.
+
+    Proyecto:
+      type: object
+      properties:
+        id:
+          type: string
+        nombre:
+          type: string
+        descripcion:
+          type: [string, "null"]
+        estado:
+          $ref: "#/components/schemas/EstadoProyecto"
+        presupuesto:
+          type: [number, "null"]
+        fechaInicio:
+          type: string
+          format: date-time
+        fechaFinEstimada:
+          type: [string, "null"]
+          format: date-time
+        activo:
+          type: boolean
+        clienteId:
+          type: string
+        creadoPorId:
+          type: string
+        creadoEn:
+          type: string
+          format: date-time
+        actualizadoEn:
+          type: string
+          format: date-time
+        cliente:
+          type: object
+          properties:
+            id:
+              type: string
+            nombre:
+              type: string
+
+    ProyectoInput:
+      type: object
+      required: [nombre, clienteId, fechaInicio]
+      properties:
+        nombre:
+          type: string
+          minLength: 2
+          maxLength: 100
+        clienteId:
+          type: string
+        descripcion:
+          type: string
+          maxLength: 1000
+        presupuesto:
+          type: number
+          minimum: 0
+        fechaInicio:
+          type: string
+          format: date
+          example: "2026-03-01"
+        fechaFinEstimada:
+          type: string
+          format: date
+
+    ProyectoUpdateInput:
+      type: object
+      description: Todos los campos son opcionales, pero se exige al menos uno.
+      properties:
+        nombre:
+          type: string
+          minLength: 2
+          maxLength: 100
+        descripcion:
+          type: string
+          maxLength: 1000
+        presupuesto:
+          type: number
+          minimum: 0
+        fechaInicio:
+          type: string
+          format: date
+        fechaFinEstimada:
+          type: string
+          format: date
+
+    Tarea:
+      type: object
+      properties:
+        id:
+          type: string
+        titulo:
+          type: string
+        descripcion:
+          type: [string, "null"]
+        estado:
+          $ref: "#/components/schemas/EstadoTarea"
+        prioridad:
+          $ref: "#/components/schemas/Prioridad"
+        fechaLimite:
+          type: [string, "null"]
+          format: date-time
+        horasEstimadas:
+          type: [number, "null"]
+        activo:
+          type: boolean
+        proyectoId:
+          type: string
+        responsableId:
+          type: [string, "null"]
+        creadoEn:
+          type: string
+          format: date-time
+        actualizadoEn:
+          type: string
+          format: date-time
+        proyecto:
+          type: object
+          properties:
+            id:
+              type: string
+            nombre:
+              type: string
+            clienteId:
+              type: string
+            estado:
+              $ref: "#/components/schemas/EstadoProyecto"
+            activo:
+              type: boolean
+        responsable:
+          type: [object, "null"]
+          properties:
+            id:
+              type: string
+            nombre:
+              type: string
+
+    TareaInput:
+      type: object
+      required: [titulo, proyectoId]
+      properties:
+        titulo:
+          type: string
+          minLength: 3
+          maxLength: 150
+        descripcion:
+          type: string
+          maxLength: 1000
+        proyectoId:
+          type: string
+        responsableId:
+          type: string
+          description: Debe ser un usuario interno activo (ADMIN u OPERADOR).
+        prioridad:
+          $ref: "#/components/schemas/Prioridad"
+        fechaLimite:
+          type: string
+          format: date
+        horasEstimadas:
+          type: number
+          minimum: 0
+          maximum: 999
+
+    TareaUpdateInput:
+      type: object
+      description: Todos los campos son opcionales, pero se exige al menos uno.
+      properties:
+        titulo:
+          type: string
+          minLength: 3
+          maxLength: 150
+        descripcion:
+          type: string
+          maxLength: 1000
+        responsableId:
+          type: string
+        prioridad:
+          $ref: "#/components/schemas/Prioridad"
+        fechaLimite:
+          type: string
+          format: date
+        horasEstimadas:
+          type: number
+          minimum: 0
+          maximum: 999
+
+    PaginadoClientes:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Cliente"
+        total:
+          type: integer
+        pagina:
+          type: integer
+        porPagina:
+          type: integer
+        totalPaginas:
+          type: integer
+
+    PaginadoProyectos:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Proyecto"
+        total:
+          type: integer
+        pagina:
+          type: integer
+        porPagina:
+          type: integer
+        totalPaginas:
+          type: integer
+
+    PaginadoTareas:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Tarea"
+        total:
+          type: integer
+        pagina:
+          type: integer
+        porPagina:
+          type: integer
+        totalPaginas:
+          type: integer

@@ -42,13 +42,13 @@ Convenciones:
 
 **Criterios de aceptación**
 
-- [ ] El formulario pide nombre, empresa, email y contraseña.
-- [ ] La contraseña exige mínimo 10 caracteres, al menos una letra y un número (máximo 72 por bcrypt).
-- [ ] El email se normaliza (trim + minúsculas) y se valida el formato.
-- [ ] Se crea la empresa (`Cliente`) y el usuario con rol `CLIENTE` en una transacción; si falla cualquiera, no queda ninguno de los dos.
-- [ ] Un email ya registrado devuelve `409` con el detalle en el campo `email` (sin revelar datos extra).
-- [ ] Al registrarse, la sesión queda iniciada y se redirige al panel.
-- [ ] Los errores se muestran junto al campo y con un toast.
+- [x] El formulario pide nombre, empresa, email y contraseña.
+- [x] La contraseña exige mínimo 10 caracteres, al menos una letra y un número (máximo 72 por bcrypt).
+- [x] El email se normaliza (trim + minúsculas) y se valida el formato.
+- [x] Se crea la empresa (`Cliente`) y el usuario con rol `CLIENTE` en una transacción; si falla cualquiera, no queda ninguno de los dos.
+- [x] Un email ya registrado devuelve `409` con el detalle en el campo `email` (sin revelar datos extra).
+- [x] Al registrarse, la sesión queda iniciada y se redirige al panel.
+- [x] Los errores se muestran junto al campo y con un toast.
 
 **Reglas de negocio**: email único en `Cliente` y en `Usuario`; el usuario creado queda activo.
 
@@ -60,13 +60,13 @@ Convenciones:
 
 **Criterios de aceptación**
 
-- [ ] Credenciales válidas → `200`, cookie `sesion` (`HttpOnly`, `SameSite=Lax`, 8 h) y redirección al destino solicitado o al panel.
-- [ ] Credenciales inválidas → `401` con mensaje genérico «Email o contraseña incorrectos.».
-- [ ] Un email inexistente tarda un tiempo comparable a una contraseña incorrecta (hash de relleno).
-- [ ] Una cuenta dada de baja → `403`.
-- [ ] Tras 5 intentos fallidos en 15 minutos para el mismo email → `429` con indicación de espera.
-- [ ] El parámetro `?redirect=` acepta sólo rutas internas (sin `//` ni dominios externos).
-- [ ] Un usuario ya autenticado que entra a `/login` es redirigido al panel (validado contra la base).
+- [x] Credenciales válidas → `200`, cookie `sesion` (`HttpOnly`, `SameSite=Lax`, 8 h) y redirección al destino solicitado o al panel.
+- [x] Credenciales inválidas → `401` con mensaje genérico «Email o contraseña incorrectos.».
+- [x] Un email inexistente tarda un tiempo comparable a una contraseña incorrecta (hash de relleno).
+- [x] Una cuenta dada de baja → `403`.
+- [x] Tras 5 intentos fallidos en 15 minutos para el mismo email → `429` con indicación de espera.
+- [x] El parámetro `?redirect=` acepta sólo rutas internas (sin `//` ni dominios externos).
+- [x] Un usuario ya autenticado que entra a `/login` es redirigido al panel (validado contra la base).
 
 ---
 
@@ -76,9 +76,9 @@ Convenciones:
 
 **Criterios de aceptación**
 
-- [ ] El botón «Cerrar sesión» del panel invoca `POST /api/v1/auth/logout`.
-- [ ] La cookie se elimina y el usuario es redirigido a `/login`.
-- [ ] Un intento de acceder a una ruta privada después del logout redirige a `/login`.
+- [x] El botón «Cerrar sesión» del panel invoca `POST /api/v1/auth/logout`.
+- [x] La cookie se elimina y el usuario es redirigido a `/login`.
+- [x] Un intento de acceder a una ruta privada después del logout redirige a `/login`.
 
 ---
 
@@ -88,12 +88,12 @@ Convenciones:
 
 **Criterios de aceptación**
 
-- [ ] `ADMIN` y `OPERADOR` gestionan clientes, proyectos y tareas.
-- [ ] `CLIENTE` no ve el módulo de clientes en la navegación ni puede acceder por URL (`/clientes` → panel).
-- [ ] `GET /api/v1/clientes` con rol `CLIENTE` devuelve `403`.
-- [ ] Un `CLIENTE` que solicita un proyecto de otra empresa recibe `403` en la API y es redirigido en la UI.
-- [ ] El filtrado por empresa ocurre en el servidor, ignorando cualquier `clienteId` enviado por el cliente.
-- [ ] Las reglas viven en el servicio (`policy.ts`), no en la interfaz.
+- [x] `ADMIN` y `OPERADOR` gestionan clientes, proyectos y tareas.
+- [x] `CLIENTE` no ve el módulo de clientes en la navegación ni puede acceder por URL (`/clientes` → panel).
+- [x] `GET /api/v1/clientes` con rol `CLIENTE` devuelve `403`.
+- [x] Un `CLIENTE` que solicita un proyecto de otra empresa recibe `403` en la API y es redirigido en la UI.
+- [x] El filtrado por empresa ocurre en el servidor, ignorando cualquier `clienteId` enviado por el cliente.
+- [x] Las reglas viven en el servicio (`policy.ts`), no en la interfaz.
 
 ---
 
@@ -105,12 +105,12 @@ Convenciones:
 
 **Criterios de aceptación**
 
-- [ ] Nombre (2–100) y email válidos son obligatorios; CUIT opcional de 11 dígitos (acepta guiones) y único.
-- [ ] Teléfono admite sólo números, espacios y `+ ( ) -` (6–30 caracteres).
-- [ ] Email y CUIT duplicados devuelven `409` con el error en el campo correspondiente.
-- [ ] El listado muestra nombre, email, CUIT, teléfono y estado; permite buscar por nombre/email/CUIT y filtrar por activos/dados de baja.
-- [ ] La lista está paginada (10 por página por defecto, máximo 100) y muestra el total.
-- [ ] El alta exitosa muestra un toast de confirmación y refresca el listado.
+- [x] Nombre (2–100) y email válidos son obligatorios; CUIT opcional de 11 dígitos (acepta guiones) y único.
+- [x] Teléfono admite sólo números, espacios y `+ ( ) -` (6–30 caracteres).
+- [x] Email y CUIT duplicados devuelven `409` con el error en el campo correspondiente.
+- [x] El listado muestra nombre, email, CUIT, teléfono y estado; permite buscar por nombre/email/CUIT y filtrar por activos/dados de baja.
+- [x] La lista está paginada (10 por página por defecto, máximo 100) y muestra el total.
+- [x] El alta exitosa muestra un toast de confirmación y refresca el listado.
 
 ---
 
@@ -120,11 +120,11 @@ Convenciones:
 
 **Criterios de aceptación**
 
-- [ ] Se pueden modificar todos los campos; se exige al menos uno.
-- [ ] Las validaciones son las mismas que en el alta.
-- [ ] Email o CUIT que pertenezcan a otro cliente devuelven `409`.
-- [ ] La ficha muestra datos de contacto, notas y proyectos asociados.
-- [ ] La edición exitosa muestra un toast y refleja los cambios sin recargar manualmente.
+- [x] Se pueden modificar todos los campos; se exige al menos uno.
+- [x] Las validaciones son las mismas que en el alta.
+- [x] Email o CUIT que pertenezcan a otro cliente devuelven `409`.
+- [x] La ficha muestra datos de contacto, notas y proyectos asociados.
+- [x] La edición exitosa muestra un toast y refleja los cambios sin recargar manualmente.
 
 ---
 
@@ -134,11 +134,11 @@ Convenciones:
 
 **Criterios de aceptación**
 
-- [ ] `DELETE /api/v1/clientes/{id}` marca `activo=false` y `eliminadoEn`; no borra registros.
-- [ ] Si el cliente tiene proyectos activos, la operación devuelve `409` con un mensaje claro.
-- [ ] El cliente dado de baja desaparece de los listados por defecto y puede verse con el filtro «Dados de baja».
-- [ ] `POST /api/v1/clientes/{id}/reactivar` lo vuelve a habilitar.
-- [ ] Un cliente dado de baja no puede recibir proyectos nuevos (`409`).
+- [x] `DELETE /api/v1/clientes/{id}` marca `activo=false` y `eliminadoEn`; no borra registros.
+- [x] Si el cliente tiene proyectos activos, la operación devuelve `409` con un mensaje claro.
+- [x] El cliente dado de baja desaparece de los listados por defecto y puede verse con el filtro «Dados de baja».
+- [x] `POST /api/v1/clientes/{id}/reactivar` lo vuelve a habilitar.
+- [x] Un cliente dado de baja no puede recibir proyectos nuevos (`409`).
 
 ---
 
@@ -150,12 +150,12 @@ Convenciones:
 
 **Criterios de aceptación**
 
-- [ ] Nombre (2–100), cliente y fecha de inicio son obligatorios; presupuesto ≥ 0 y fecha de fin estimada opcionales.
-- [ ] Sólo se puede asociar un cliente existente y activo (`409` en caso contrario).
-- [ ] El proyecto nace en estado `PLANIFICADO`.
-- [ ] El listado muestra proyecto, cliente, estado, presupuesto y fin estimado; filtra por estado y búsqueda.
-- [ ] La fecha se muestra en formato `dd/mm/aaaa` sin desplazamiento por zona horaria.
-- [ ] El alta exitosa muestra un toast y el proyecto aparece en el listado.
+- [x] Nombre (2–100), cliente y fecha de inicio son obligatorios; presupuesto ≥ 0 y fecha de fin estimada opcionales.
+- [x] Sólo se puede asociar un cliente existente y activo (`409` en caso contrario).
+- [x] El proyecto nace en estado `PLANIFICADO`.
+- [x] El listado muestra proyecto, cliente, estado, presupuesto y fin estimado; filtra por estado y búsqueda.
+- [x] La fecha se muestra en formato `dd/mm/aaaa` sin desplazamiento por zona horaria.
+- [x] El alta exitosa muestra un toast y el proyecto aparece en el listado.
 
 ---
 
@@ -165,12 +165,12 @@ Convenciones:
 
 **Criterios de aceptación**
 
-- [ ] Transiciones válidas: `PLANIFICADO → EN_CURSO | CANCELADO`; `EN_CURSO → PAUSADO | FINALIZADO | CANCELADO`; `PAUSADO → EN_CURSO | CANCELADO`.
-- [ ] `FINALIZADO` y `CANCELADO` son terminales.
-- [ ] Una transición inválida devuelve `409` con un mensaje que indica el estado actual.
-- [ ] Sólo `ADMIN` y `OPERADOR` cambian el estado (`403` para `CLIENTE`).
-- [ ] La UI ofrece únicamente las transiciones posibles desde el estado actual.
-- [ ] El cambio exitoso muestra un toast con el nuevo estado.
+- [x] Transiciones válidas: `PLANIFICADO → EN_CURSO | CANCELADO`; `EN_CURSO → PAUSADO | FINALIZADO | CANCELADO`; `PAUSADO → EN_CURSO | CANCELADO`.
+- [x] `FINALIZADO` y `CANCELADO` son terminales.
+- [x] Una transición inválida devuelve `409` con un mensaje que indica el estado actual.
+- [x] Sólo `ADMIN` y `OPERADOR` cambian el estado (`403` para `CLIENTE`).
+- [x] La UI ofrece únicamente las transiciones posibles desde el estado actual.
+- [x] El cambio exitoso muestra un toast con el nuevo estado.
 
 ---
 
@@ -180,10 +180,10 @@ Convenciones:
 
 **Criterios de aceptación**
 
-- [ ] No se puede editar un proyecto `FINALIZADO` o `CANCELADO` (`409`).
-- [ ] La baja lógica desactiva el proyecto y sus tareas en una transacción.
-- [ ] Si hay tareas `EN_PROGRESO`, la baja devuelve `409` indicando cuántas.
-- [ ] Un proyecto dado de baja no aparece en los listados por defecto.
+- [x] No se puede editar un proyecto `FINALIZADO` o `CANCELADO` (`409`).
+- [x] La baja lógica desactiva el proyecto y sus tareas en una transacción.
+- [x] Si hay tareas `EN_PROGRESO`, la baja devuelve `409` indicando cuántas.
+- [x] Un proyecto dado de baja no aparece en los listados por defecto.
 
 ---
 
@@ -195,11 +195,11 @@ Convenciones:
 
 **Criterios de aceptación**
 
-- [ ] Título (3–150) y proyecto son obligatorios; descripción, prioridad (`BAJA|MEDIA|ALTA`), fecha límite, horas estimadas (0–999) y responsable son opcionales.
-- [ ] Sólo se permiten tareas en proyectos activos y no finalizados/cancelados (`409`).
-- [ ] El responsable debe ser un usuario interno activo (`ADMIN` u `OPERADOR`).
-- [ ] La tarea nace `PENDIENTE` con prioridad `MEDIA` por defecto.
-- [ ] La tabla de tareas muestra estado, prioridad, responsable y fecha límite, con acciones por fila.
+- [x] Título (3–150) y proyecto son obligatorios; descripción, prioridad (`BAJA|MEDIA|ALTA`), fecha límite, horas estimadas (0–999) y responsable son opcionales.
+- [x] Sólo se permiten tareas en proyectos activos y no finalizados/cancelados (`409`).
+- [x] El responsable debe ser un usuario interno activo (`ADMIN` u `OPERADOR`).
+- [x] La tarea nace `PENDIENTE` con prioridad `MEDIA` por defecto.
+- [x] La tabla de tareas muestra estado, prioridad, responsable y fecha límite, con acciones por fila.
 
 ---
 
@@ -209,11 +209,11 @@ Convenciones:
 
 **Criterios de aceptación**
 
-- [ ] Transiciones: `PENDIENTE → EN_PROGRESO | BLOQUEADA | COMPLETADA`; `EN_PROGRESO → PENDIENTE | BLOQUEADA | COMPLETADA`; `BLOQUEADA → PENDIENTE | EN_PROGRESO`; `COMPLETADA → EN_PROGRESO`.
-- [ ] Una transición inválida devuelve `409`.
-- [ ] No se puede modificar una tarea de un proyecto cancelado.
-- [ ] Sólo el personal interno cambia estados (`403` para `CLIENTE`).
-- [ ] El cambio exitoso muestra un toast y actualiza la fila.
+- [x] Transiciones: `PENDIENTE → EN_PROGRESO | BLOQUEADA | COMPLETADA`; `EN_PROGRESO → PENDIENTE | BLOQUEADA | COMPLETADA`; `BLOQUEADA → PENDIENTE | EN_PROGRESO`; `COMPLETADA → EN_PROGRESO`.
+- [x] Una transición inválida devuelve `409`.
+- [x] No se puede modificar una tarea de un proyecto cancelado.
+- [x] Sólo el personal interno cambia estados (`403` para `CLIENTE`).
+- [x] El cambio exitoso muestra un toast y actualiza la fila.
 
 ---
 
@@ -225,11 +225,11 @@ Convenciones:
 
 **Criterios de aceptación**
 
-- [ ] La navegación no muestra «Clientes».
-- [ ] El listado de proyectos muestra únicamente los de su `clienteId`, incluso si intenta forzar el filtro por URL.
-- [ ] `/api/v1/clientes` devuelve `403`; `/api/v1/proyectos/{id}` de otra empresa también.
-- [ ] Acceder por URL a un proyecto ajeno redirige al panel.
-- [ ] El panel muestra métricas y listados acotados a su empresa.
+- [x] La navegación no muestra «Clientes».
+- [x] El listado de proyectos muestra únicamente los de su `clienteId`, incluso si intenta forzar el filtro por URL.
+- [x] `/api/v1/clientes` devuelve `403`; `/api/v1/proyectos/{id}` de otra empresa también.
+- [x] Acceder por URL a un proyecto ajeno redirige al panel.
+- [x] El panel muestra métricas y listados acotados a su empresa.
 
 ---
 
@@ -239,11 +239,11 @@ Convenciones:
 
 **Criterios de aceptación**
 
-- [ ] Para roles internos: clientes activos, proyectos en curso y tareas abiertas de toda la cartera.
-- [ ] Para `CLIENTE`: proyectos en curso y tareas abiertas de su empresa (sin métrica de clientes).
-- [ ] Muestra los últimos 5 proyectos y las próximas 6 tareas con vencimiento.
-- [ ] Cada bloque enlaza al listado correspondiente.
-- [ ] El layout es responsive (sidebar en escritorio, encabezado compacto en móvil).
+- [x] Para roles internos: clientes activos, proyectos en curso y tareas abiertas de toda la cartera.
+- [x] Para `CLIENTE`: proyectos en curso y tareas abiertas de su empresa (sin métrica de clientes).
+- [x] Muestra los últimos 5 proyectos y las próximas 6 tareas con vencimiento.
+- [x] Cada bloque enlaza al listado correspondiente.
+- [x] El layout es responsive (sidebar en escritorio, encabezado compacto en móvil).
 
 ---
 
@@ -255,10 +255,10 @@ Convenciones:
 
 **Criterios de aceptación**
 
-- [ ] `public/openapi.yaml` describe todos los endpoints, esquemas, roles y códigos de error (OpenAPI 3.1).
-- [ ] `/docs` monta Swagger UI servido localmente, compatible con la CSP.
-- [ ] Se puede probar el flujo completo desde la consola (login → operaciones) en entorno local.
-- [ ] El README enlaza el contrato y la consola.
+- [x] `public/openapi.yaml` describe todos los endpoints, esquemas, roles y códigos de error (OpenAPI 3.1).
+- [x] `/docs` monta Swagger UI servido localmente, compatible con la CSP.
+- [x] Se puede probar el flujo completo desde la consola (login → operaciones) en entorno local.
+- [x] El README enlaza el contrato y la consola.
 
 ---
 
@@ -268,12 +268,12 @@ Convenciones:
 
 **Criterios de aceptación**
 
-- [ ] Pruebas unitarias de las reglas de clientes, proyectos, tareas y autenticación.
-- [ ] Pruebas de máquinas de estado (transiciones válidas e inválidas).
-- [ ] Pruebas de RBAC e IDOR (un `CLIENTE` no accede a otra empresa).
-- [ ] Pruebas de hash de contraseñas, JWT y rate limiter.
-- [ ] Pruebas de integración contra PostgreSQL real (constraints, FK, transacciones).
-- [ ] `npm test` corre todo y falla si algo se rompe.
+- [x] Pruebas unitarias de las reglas de clientes, proyectos, tareas y autenticación.
+- [x] Pruebas de máquinas de estado (transiciones válidas e inválidas).
+- [x] Pruebas de RBAC e IDOR (un `CLIENTE` no accede a otra empresa).
+- [x] Pruebas de hash de contraseñas, JWT y rate limiter.
+- [x] Pruebas de integración contra PostgreSQL real (constraints, FK, transacciones).
+- [x] `npm test` corre todo y falla si algo se rompe.
 
 ---
 
@@ -283,10 +283,10 @@ Convenciones:
 
 **Criterios de aceptación**
 
-- [ ] GitHub Actions ejecuta lint, typecheck, tests y build en cada PR y push a `main`.
-- [ ] El job de tests levanta un PostgreSQL de servicio y aplica migraciones.
-- [ ] Se valida el formato de los mensajes de commit (Commitlint).
-- [ ] El pipeline debe estar en verde para mergear.
+- [x] GitHub Actions ejecuta lint, typecheck, tests y build en cada PR y push a `main`.
+- [x] El job de tests levanta un PostgreSQL de servicio y aplica migraciones.
+- [x] Se valida el formato de los mensajes de commit (Commitlint).
+- [x] El pipeline debe estar en verde para mergear.
 
 ---
 

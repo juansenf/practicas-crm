@@ -161,5 +161,6 @@ Nunca editar una migración ya aplicada; crear una nueva.
 - [x] `main` protegida y CI en verde.
 - [x] Variables de entorno cargadas en el proveedor.
 - [x] Base con migraciones aplicadas.
-- [ ] Usuarios de demostración deshabilitados (se conservan para la evaluación).
+- [x] Deploy automático: el repositorio está vinculado y cada merge a `main` publica solo.
+- [ ] Usuarios de demostración deshabilitados — **excepción deliberada**: se conservan para la evaluación (ver §0).
 - [x] `/docs` y `openapi.yaml` accesibles.

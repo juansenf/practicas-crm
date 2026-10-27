@@ -65,6 +65,7 @@ El proyecto se gestionó con un tablero de cinco columnas. Este documento conser
 | BUG-04 CSP bloqueaba React en desarrollo | Hecho | `next.config.ts` |
 | BUG-05 Swagger UI bloqueado por CSP | Hecho | `public/docs/swagger-ui/` |
 | BUG-06 Warning de ESLint en Commitlint | Hecho | `bugfix/lint-commitlint` |
+| BUG-07 Primer run de CI en rojo | Hecho | `bugfix/ci-pipeline` (run 40450260803) |
 
 ## Cómo levantar el tablero en GitHub
 

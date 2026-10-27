@@ -141,6 +141,7 @@ Verificar que el sistema **Nexo** cumple sus reglas de negocio críticas, que el
 | BUG-04 | CSP bloqueaba `eval()` de React en desarrollo. | Humo (consola) | `'unsafe-eval'` sólo en `NODE_ENV !== "production"`. |
 | BUG-05 | Swagger UI no cargaba por la CSP (script de CDN). | Humo (SM-13) | Bundle servido desde `public/docs/swagger-ui/`. |
 | BUG-06 | ESLint reportaba un warning por la exportación anónima de la configuración de Commitlint. | CI (lint) | Se asigna la configuración a una constante antes de exportarla. |
+| BUG-07 | El primer run de CI falló en `typecheck` (`LayoutProps` no existe sin `.next/types`) y en la preparación de la base (`database "practicas_crm_test" does not exist`). | GitHub Actions (run 40450260803) | `typecheck` ejecuta `next typegen` y el script crea la base antes de conectarse. |
 
 ## 8. Ejecución
 

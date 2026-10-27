@@ -2,6 +2,19 @@
 
 Guía para publicar **Nexo** en producción con **Vercel** (aplicación) y **Neon** (PostgreSQL). Al final se incluyen alternativas y resolución de problemas.
 
+## 0. Estado actual del despliegue
+
+| Dato | Valor |
+| --- | --- |
+| URL pública | <https://practicas-crm.vercel.app> |
+| Proyecto Vercel | `practicas-crm` (equipo `plan-agency`) |
+| Base de datos | Neon `practicas-crm`, PostgreSQL 18, región `aws-sa-east-1` |
+| Migraciones | `20261027034445_init` aplicada con `prisma migrate deploy` |
+| Datos | Seed de demostración cargado (3 usuarios, 2 clientes, 3 proyectos) |
+| Verificado | 2026-10-27: login, `/docs`, `openapi.yaml`, cookie `Secure`, RBAC y `429` |
+
+Los usuarios de demostración se mantienen activos **a propósito** para que la cátedra pueda evaluar la aplicación. En un entorno real se eliminan antes de publicar (ver sección 4).
+
 ## 1. Arquitectura del despliegue
 
 ```
@@ -64,20 +77,20 @@ DATABASE_URL="postgresql://...neon.tech/practicas_crm?sslmode=require" npm run d
 
 ## 5. Verificación posterior al despliegue
 
-- [ ] La URL pública responde por HTTPS.
-- [ ] `/login` carga y permite iniciar sesión.
-- [ ] La cookie `sesion` aparece con `Secure`, `HttpOnly` y `SameSite=Lax` (DevTools → Application → Cookies).
-- [ ] El panel muestra métricas.
-- [ ] Alta de cliente y de proyecto funcionan (los datos persisten tras recargar).
-- [ ] `/docs` carga Swagger UI sin errores de CSP en la consola.
-- [ ] Las cabeceras de seguridad están presentes:
+- [x] La URL pública responde por HTTPS.
+- [x] `/login` carga y permite iniciar sesión.
+- [x] La cookie `sesion` aparece con `Secure`, `HttpOnly` y `SameSite=Lax` (DevTools → Application → Cookies).
+- [x] El panel muestra métricas.
+- [x] Alta de cliente y de proyecto funcionan (los datos persisten tras recargar).
+- [x] `/docs` carga Swagger UI sin errores de CSP en la consola.
+- [x] Las cabeceras de seguridad están presentes:
 
   ```bash
   curl -I https://<tu-dominio>
   ```
 
-- [ ] Un usuario `CLIENTE` no accede a `/clientes` ni a proyectos de otra empresa.
-- [ ] Sexto intento fallido de login devuelve `429`.
+- [x] Un usuario `CLIENTE` no accede a `/clientes` ni a proyectos de otra empresa.
+- [x] Sexto intento fallido de login devuelve `429`.
 
 ## 6. Migraciones en el futuro
 
@@ -117,10 +130,10 @@ Nunca editar una migración ya aplicada; crear una nueva.
 
 ## 10. Checklist de entrega
 
-- [ ] URL pública funcionando y documentada en el README.
-- [ ] Repositorio público con historial de commits y PRs.
-- [ ] `main` protegida y CI en verde.
-- [ ] Variables de entorno cargadas en el proveedor.
-- [ ] Base con migraciones aplicadas.
-- [ ] Usuarios de demostración deshabilitados.
-- [ ] `/docs` y `openapi.yaml` accesibles.
+- [x] URL pública funcionando y documentada en el README.
+- [x] Repositorio público con historial de commits y PRs.
+- [x] `main` protegida y CI en verde.
+- [x] Variables de entorno cargadas en el proveedor.
+- [x] Base con migraciones aplicadas.
+- [ ] Usuarios de demostración deshabilitados (se conservan para la evaluación).
+- [x] `/docs` y `openapi.yaml` accesibles.

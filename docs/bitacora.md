@@ -114,6 +114,22 @@ Registro cronológico de las sesiones de trabajo: objetivo, actividades, decisio
 
 ---
 
+## Sesión 8 — 2026-10-27 · Publicación y despliegue (2 h)
+
+**Objetivo:** publicar el repositorio, dejar el CI en verde y desplegar en producción.
+
+- Repositorio público <https://github.com/juansenf/practicas-crm> con `main` protegida (PR obligatorio + los tres checks requeridos).
+- Primer run de CI en rojo (BUG-07): `LayoutProps` no existe sin `.next/types` y la base de integración no existía en el servicio de PostgreSQL. Correcciones en `bugfix/ci-pipeline` (PR #1).
+- Actualización de `actions/checkout`/`actions/setup-node` a v5 y badge de CI (PR #2).
+- Script `vercel-build` que aplica `prisma migrate deploy` antes del build (PR #3).
+- Base Neon `practicas-crm` (PostgreSQL 18, `aws-sa-east-1`): migración inicial aplicada y seed de demostración cargado.
+- Producción en <https://practicas-crm.vercel.app>: verificados login, `/docs`, cookie `Secure`, bloqueo del rol `CLIENTE` en `/api/v1/clientes` (403), `429` al sexto intento y logout.
+- Tablero **GitHub Projects** «Nexo · Kanban» con las cinco columnas y las 18 historias en *Hecho*.
+
+**Pendiente:** conectar el repositorio en Vercel para desplegar en cada push (requiere instalar la GitHub App de Vercel en la cuenta).
+
+---
+
 ## Resumen de tiempo
 
 | Sesión | Fecha | Horas |
@@ -125,7 +141,8 @@ Registro cronológico de las sesiones de trabajo: objetivo, actividades, decisio
 | 5 | 2026-10-25 | 6 |
 | 6 | 2026-10-26 | 5 |
 | 7 | 2026-10-27 | 4 |
-| **Total** | | **30** |
+| 8 | 2026-10-27 | 2 |
+| **Total** | | **32** |
 
 ## Decisiones registradas
 
@@ -138,6 +155,7 @@ Registro cronológico de las sesiones de trabajo: objetivo, actividades, decisio
 | 2026-10-22 | Baja lógica en las tres entidades de negocio | [ADR 0005](adr/0005-baja-logica.md) |
 | 2026-10-26 | Swagger UI servido localmente | [ADR 0006](adr/0006-swagger-ui-local.md) |
 | 2026-10-24 | Validación compartida con Zod | [ADR 0007](adr/0007-validacion-zod.md) |
+| 2026-10-27 | Despliegue en Vercel + Neon | [despliegue.md](despliegue.md) |
 
 ## Historial de defectos
 

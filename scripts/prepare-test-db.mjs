@@ -45,25 +45,9 @@ if (urlDev && urlDev.host === urlTest.host && urlDev.pathname === urlTest.pathna
   process.exit(1);
 }
 
-const cliente = new Client({ connectionString: testUrl });
-await cliente.connect();
-
-const semilla = await cliente.query(
-  "select email from usuarios where email like '%@nexo.local' limit 1",
-).catch(() => ({ rows: [] }));
-
-if (semilla.rows.length > 0) {
-  console.error(
-    `TEST_DATABASE_URL parece apuntar a la base de desarrollo (encontré "${semilla.rows[0].email}").\n` +
-      "Con `prisma dev`, levantá una instancia aparte: npx prisma dev -d -n test",
-  );
-  await cliente.end();
-  process.exit(1);
-}
-
-await cliente.end();
-
 // Crea la base en servidores PostgreSQL reales. En `prisma dev` es un no-op.
+// Se hace antes de conectarse a la base de pruebas porque en un servidor nuevo
+// (por ejemplo el servicio de PostgreSQL de GitHub Actions) todavía no existe.
 const admin = new Client({
   connectionString: (() => {
     const u = new URL(testUrl);
@@ -84,6 +68,24 @@ try {
 } finally {
   await admin.end().catch(() => {});
 }
+
+const cliente = new Client({ connectionString: testUrl });
+await cliente.connect();
+
+const semilla = await cliente.query(
+  "select email from usuarios where email like '%@nexo.local' limit 1",
+).catch(() => ({ rows: [] }));
+
+if (semilla.rows.length > 0) {
+  console.error(
+    `TEST_DATABASE_URL parece apuntar a la base de desarrollo (encontré "${semilla.rows[0].email}").\n` +
+      "Con `prisma dev`, levantá una instancia aparte: npx prisma dev -d -n test",
+  );
+  await cliente.end();
+  process.exit(1);
+}
+
+await cliente.end();
 
 const resultado = spawnSync("npx", ["prisma", "migrate", "deploy"], {
   stdio: "inherit",

@@ -149,3 +149,4 @@ Registro cronológico de las sesiones de trabajo: objetivo, actividades, decisio
 | BUG-04 | 2026-10-26 | CSP bloqueaba React en desarrollo | Corregido |
 | BUG-05 | 2026-10-26 | Swagger UI bloqueado por CSP | Corregido |
 | BUG-06 | 2026-10-27 | Warning de ESLint por export anónimo en Commitlint | Corregido |
+| BUG-07 | 2026-10-27 | Primer run de CI: falta de tipos de ruta y base de integración inexistente | Corregido |

@@ -30,7 +30,7 @@ Convenciones:
 | HU-15 | Documentación de la API | Calidad | Alta | 3 | Hecho |
 | HU-16 | Pruebas automatizadas | Calidad | Alta | 5 | Hecho |
 | HU-17 | Pipeline de integración continua | Calidad | Media | 3 | Hecho |
-| HU-18 | Despliegue en la nube | Calidad | Alta | 3 | En curso |
+| HU-18 | Despliegue en la nube | Calidad | Alta | 3 | Hecho |
 
 ---
 
@@ -296,8 +296,10 @@ Convenciones:
 
 **Criterios de aceptación**
 
-- [ ] Aplicación desplegada y accesible por HTTPS.
-- [ ] Base PostgreSQL gestionada, con migraciones aplicadas.
-- [ ] Variables de entorno configuradas en el proveedor (sin secretos en el repositorio).
-- [ ] Login, CRUD y `/docs` funcionan en producción.
-- [ ] Cookie con flag `Secure` en producción.
+- [x] Aplicación desplegada y accesible por HTTPS.
+- [x] Base PostgreSQL gestionada, con migraciones aplicadas.
+- [x] Variables de entorno configuradas en el proveedor (sin secretos en el repositorio).
+- [x] Login, CRUD y `/docs` funcionan en producción.
+- [x] Cookie con flag `Secure` en producción.
+
+**Evidencia:** <https://practicas-crm.vercel.app> · Vercel + Neon (PostgreSQL 18, `aws-sa-east-1`) · verificación del 2026-10-27 en [`despliegue.md`](despliegue.md#0-estado-actual-del-despliegue).

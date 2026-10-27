@@ -16,29 +16,13 @@ El proyecto se gestionó con un tablero de cinco columnas. Este documento conser
 
 ## Tablero al cierre de la entrega
 
-```
-┌─────────────────┬─────────────────┬─────────────────┬─────────────────┬─────────────────┐
-│    BACKLOG      │    POR HACER    │    EN CURSO     │  EN REVISIÓN    │      HECHO      │
-├─────────────────┼─────────────────┼─────────────────┼─────────────────┼─────────────────┤
-│                 │                 │                 │                 │ HU-01 Registro  │
-│                 │                 │                 │                 │ HU-02 Login     │
-│                 │                 │                 │                 │ HU-03 Logout    │
-│                 │                 │                 │                 │ HU-04 RBAC      │
-│                 │                 │                 │                 │ HU-05 Clientes  │
-│                 │                 │                 │                 │ HU-06 Edición   │
-│                 │                 │                 │                 │ HU-07 Baja      │
-│                 │                 │                 │                 │ HU-08 Proyectos │
-│                 │                 │                 │                 │ HU-09 Ciclo     │
-│                 │                 │   HU-18         │                 │ HU-10 Edición   │
-│                 │                 │   Despliegue    │                 │ HU-11 Tareas    │
-│                 │                 │   en la nube    │                 │ HU-12 Estados   │
-│                 │                 │                 │                 │ HU-13 Portal    │
-│                 │                 │                 │                 │ HU-14 Panel     │
-│                 │                 │                 │                 │ HU-15 OpenAPI   │
-│                 │                 │                 │                 │ HU-16 Pruebas   │
-│                 │                 │                 │                 │ HU-17 CI        │
-└─────────────────┴─────────────────┴─────────────────┴─────────────────┴─────────────────┘
-```
+| Columna | Tarjetas |
+| --- | --- |
+| **Backlog** | — |
+| **Por hacer** | — |
+| **En curso** | — |
+| **En revisión** | — |
+| **Hecho** | HU-01 Registro · HU-02 Login · HU-03 Logout · HU-04 RBAC · HU-05 Clientes · HU-06 Edición · HU-07 Baja · HU-08 Proyectos · HU-09 Ciclo de vida · HU-10 Edición de proyectos · HU-11 Tareas · HU-12 Estados de tarea · HU-13 Portal del cliente · HU-14 Panel · HU-15 OpenAPI · HU-16 Pruebas · HU-17 CI · HU-18 Despliegue · BUG-01 a BUG-07 |
 
 ## Trazabilidad historia → rama → commits
 
@@ -52,8 +36,9 @@ El proyecto se gestionó con un tablero de cinco columnas. Este documento conser
 | HU-15 | `docs/documentacion` | `docs(api): publicar contrato OpenAPI…` |
 | HU-16 | `test/integracion` | `test(db): cubrir persistencia real…` |
 | HU-17 | `ci/github-actions` | `ci: ejecutar lint, tipos, pruebas y build…` |
-| HU-18 | — | Pendiente de despliegue (requiere credenciales del proveedor). |
+| HU-18 | `feat/despliegue` | `feat(despliegue): aplicar migraciones en el build de Vercel` |
 | BUG-05 | `bugfix/lint-commitlint` | `fix(config): corregir exportación anónima…` |
+| BUG-07 | `bugfix/ci-pipeline` | `fix(ci): generar los tipos de ruta…` |
 
 ## Defectos del tablero
 
@@ -69,7 +54,9 @@ El proyecto se gestionó con un tablero de cinco columnas. Este documento conser
 
 ## Cómo levantar el tablero en GitHub
 
-1. Crear el repositorio y subir `main`.
-2. En **Projects → New project → Board**, crear las cinco columnas.
-3. Cargar las historias como issues (plantilla «Historia de usuario») y moverlas según el estado.
-4. Vincular cada PR con su issue (`Closes #N`) para que el tablero se mueva automáticamente al mergear.
+El tablero vivo está en **<https://github.com/users/juansenf/projects/1>** («Nexo · Kanban») con las cinco columnas y las 18 historias cargadas como issues (`HU-01` a `HU-18`).
+
+1. Repositorio: <https://github.com/juansenf/practicas-crm>.
+2. En **Projects → Nexo · Kanban** se ven las columnas *Backlog*, *Por hacer*, *En curso*, *En revisión* y *Hecho*.
+3. Las historias se cargaron con la plantilla «Historia de usuario» y hoy están en *Hecho*.
+4. Cada PR nuevo se vincula con su issue (`Closes #N`) para que la tarjeta se mueva sola al mergear.

@@ -159,6 +159,23 @@ Test Files  8 passed (8)
      Tests  53 passed (53)
 ```
 
+### 8.1 Humo en producción (2026-10-27)
+
+Ejecutado contra <https://practicas-crm.vercel.app> con el build desplegado en Vercel y la base Neon:
+
+| Caso | Resultado |
+| --- | --- |
+| SM-01 Login válido (`admin@nexo.local`) | `200`, cookie `HttpOnly; Secure; SameSite=Lax` |
+| SM-05 Sesión vigente (`/api/v1/auth/me`) | `200`, rol `ADMIN` |
+| SM-06 Listado de clientes | `200`, 2 clientes |
+| SM-09 Cabeceras de seguridad | `nosniff`, `DENY`, HSTS y CSP sin `unsafe-eval` |
+| SM-10 IDOR por API como `CLIENTE` | `403` en `/api/v1/clientes`; 2 proyectos propios |
+| SM-11 API sin sesión | `401` |
+| SM-12 Logout | `204` y cookie eliminada |
+| SM-13 `/docs` y `/openapi.yaml` | `200`, Swagger UI y contrato de 27 KB |
+| Rate limit | `401,401,401,401,401,429` |
+| IDOR de otro cliente | No expuesto: el listado está bloqueado por rol |
+
 ## 9. Riesgos y trabajo futuro
 
 - **Rate limit en memoria**: en un despliegue serverless con múltiples instancias el límite es *best-effort*. Mitigación futura: Redis/Upstash.

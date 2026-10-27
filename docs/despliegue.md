@@ -11,6 +11,7 @@ Guía para publicar **Nexo** en producción con **Vercel** (aplicación) y **Neo
 | Base de datos | Neon `practicas-crm`, PostgreSQL 18, región `aws-sa-east-1` |
 | Migraciones | `20261027034445_init` aplicada con `prisma migrate deploy` |
 | Datos | Seed de demostración cargado (3 usuarios, 2 clientes, 3 proyectos) |
+| Repositorio vinculado | `juansenf/practicas-crm`, *Production Branch* `main` (deploy automático en cada merge) |
 | Verificado | 2026-10-27: login, `/docs`, `openapi.yaml`, cookie `Secure`, RBAC y `429` |
 
 Los usuarios de demostración se mantienen activos **a propósito** para que la cátedra pueda evaluar la aplicación. En un entorno real se eliminan antes de publicar (ver sección 4).
@@ -54,6 +55,29 @@ Navegador ──HTTPS──► Vercel (Next.js) ──TLS──► Neon (Postgre
    | `SESSION_TTL_SECONDS` | `28800` (opcional). |
 
 5. **Deploy**.
+
+### 3.1 Despliegue automático
+
+El proyecto quedó vinculado al repositorio (`Production Branch`: `main`). A partir de eso:
+
+- Cada **push a `main`** (o sea, cada PR mergeado) dispara un deployment de producción.
+- Cada **push a una rama con PR abierto** genera un *Preview Deployment* con su propia URL.
+- El build corre `vercel-build` → `prisma migrate deploy && next build`, así que las migraciones versionadas se aplican antes de publicar.
+
+Para conectar el repositorio hace falta que la GitHub App de Vercel esté instalada sobre la cuenta dueña del repo y que la cuenta de Vercel tenga esa identidad de GitHub conectada (*Account Settings → Authentication → Login Connections*). Si Vercel muestra otra identidad, la vinculación falla con `You need admin or write access to the repository` o `you need to install the GitHub integration first`.
+
+Verificación del vínculo:
+
+```bash
+vercel git connect     # debe responder "Connected"
+vercel inspect https://practicas-crm.vercel.app
+```
+
+Deploy manual de emergencia (si el pipeline no está disponible):
+
+```bash
+vercel --prod --yes
+```
 
 ### Generación del cliente Prisma
 

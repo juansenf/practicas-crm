@@ -327,14 +327,14 @@ Resumen de las mitigaciones implementadas (detalle en [`docs/seguridad.md`](docs
 | --- | --- | --- |
 | Aplicación | Vercel | Next.js 16, HTTPS gestionado y variables de entorno cifradas. |
 | Base de datos | Neon | PostgreSQL 18, región `aws-sa-east-1`, migraciones versionadas. |
-| CI | GitHub Actions | Lint, tipos, build, pruebas con PostgreSQL y Commitlint. |
+| CI/CD | GitHub Actions · Vercel | Lint, tipos, build, pruebas con PostgreSQL y Commitlint. Cada merge a `main` dispara el despliegue automático en Vercel. |
 
 **Tablero Kanban:** <https://github.com/users/juansenf/projects/1>
 
-Guía paso a paso en [`docs/despliegue.md`](docs/despliegue.md). Resumen:
+El repositorio está **vinculado al proyecto de Vercel** (*Production Branch*: `main`), así que cada push a `main` (es decir, cada PR mergeado) compila y publica solo. Guía paso a paso en [`docs/despliegue.md`](docs/despliegue.md). Resumen:
 
 1. Crear una base PostgreSQL en **Neon** y copiar la connection string.
-2. Importar el repositorio en **Vercel**.
+2. Importar el repositorio en **Vercel** (GitHub App instalada sobre `juansenf/practicas-crm`).
 3. Configurar `DATABASE_URL`, `AUTH_SECRET` y `SESSION_TTL_SECONDS` en el proyecto de Vercel.
 4. El script `vercel-build` aplica `prisma migrate deploy` antes del build.
 5. Verificar `/docs` y el flujo de login en la URL pública.

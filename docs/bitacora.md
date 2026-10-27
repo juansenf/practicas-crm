@@ -125,8 +125,9 @@ Registro cronológico de las sesiones de trabajo: objetivo, actividades, decisio
 - Base Neon `practicas-crm` (PostgreSQL 18, `aws-sa-east-1`): migración inicial aplicada y seed de demostración cargado.
 - Producción en <https://practicas-crm.vercel.app>: verificados login, `/docs`, cookie `Secure`, bloqueo del rol `CLIENTE` en `/api/v1/clientes` (403), `429` al sexto intento y logout.
 - Tablero **GitHub Projects** «Nexo · Kanban» con las cinco columnas y las 18 historias en *Hecho*.
+- Repositorio vinculado al proyecto de Vercel (`Production Branch`: `main`): cada merge a `main` despliega solo. Para lograrlo hubo que reemplazar la identidad de GitHub de la cuenta de Vercel (estaba conectada como `Juansenn`, sin acceso al repo) por `juansenf` e instalar la GitHub App sobre el repositorio.
 
-**Pendiente:** conectar el repositorio en Vercel para desplegar en cada push (requiere instalar la GitHub App de Vercel en la cuenta).
+**Pendiente:** usuarios de demostración activos a propósito para la evaluación.
 
 ---
 

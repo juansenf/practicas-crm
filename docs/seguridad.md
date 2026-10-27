@@ -115,18 +115,21 @@ Además: `.env` fuera del repositorio, `.env.example` versionado, sin secretos h
 
 ## 6. Checklist de revisión previa a producción
 
-- [ ] `AUTH_SECRET` distinto del valor de ejemplo y de al menos 32 bytes.
-- [ ] `DATABASE_URL` apunta a la base de producción con SSL.
-- [ ] `NODE_ENV=production` (cookie `Secure`, CSP sin `unsafe-eval`).
-- [ ] Usuarios de demostración eliminados o con contraseñas cambiadas.
-- [ ] Migraciones aplicadas con `prisma migrate deploy`.
-- [ ] `/docs` accesible y sin errores de CSP.
-- [ ] Rate limit verificado manualmente (6 intentos fallidos → `429`).
-- [ ] Revisar que `.env` no esté versionado (`git ls-files | Select-String .env`).
-- [ ] `npm audit` sin vulnerabilidades altas/críticas.
+Verificado sobre el despliegue del 2026-10-27 (ver [`despliegue.md`](despliegue.md#0-estado-actual-del-despliegue)):
+
+- [x] `AUTH_SECRET` distinto del valor de ejemplo y de al menos 32 bytes (generado con `crypto.randomBytes(32)` y cargado sólo en Vercel).
+- [x] `DATABASE_URL` apunta a la base de producción (Neon) con SSL.
+- [x] `NODE_ENV=production` (cookie `Secure`, CSP sin `unsafe-eval`).
+- [ ] Usuarios de demostración eliminados o con contraseñas cambiadas — **excepción deliberada**: se conservan activos para que la cátedra evalúe la aplicación (documentado en `despliegue.md` §0).
+- [x] Migraciones aplicadas con `prisma migrate deploy`.
+- [x] `/docs` accesible y sin errores de CSP.
+- [x] Rate limit verificado manualmente (`401,401,401,401,401,429`).
+- [x] `.env` fuera del repositorio (sólo se versiona `.env.example`).
+- [x] `npm audit` sin vulnerabilidades (0 en total).
 
 ## 7. Limitaciones conocidas
 
 - El rate limit es en memoria: con varias instancias serverless cada una tiene su propio contador. Se documenta como mitigación *best-effort*; la solución definitiva es un almacén compartido (Redis).
+- Los *Preview Deployments* de Vercel comparten la base de producción, así que un PR con migraciones las aplicaría sobre datos reales. Aceptado mientras el proyecto sea individual (ver `despliegue.md` §3.1).
 - No hay segundo factor de autenticación (fuera del alcance del MVP).
 - No se implementó revocación individual de sesiones (sí revalidación de estado del usuario en cada request).

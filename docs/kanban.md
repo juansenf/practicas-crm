@@ -36,9 +36,11 @@ El proyecto se gestionó con un tablero de cinco columnas. Este documento conser
 | HU-15 | `docs/documentacion` | `docs(api): publicar contrato OpenAPI…` |
 | HU-16 | `test/integracion` | `test(db): cubrir persistencia real…` |
 | HU-17 | `ci/github-actions` | `ci: ejecutar lint, tipos, pruebas y build…` |
-| HU-18 | `feat/despliegue` | `feat(despliegue): aplicar migraciones en el build de Vercel` |
+| HU-18 | `feat/despliegue` · `docs/deploy-automatico` | `feat(despliegue): aplicar migraciones…` (PR #3) · `docs(despliegue): documentar el deploy automático…` (PR #25) |
 | BUG-05 | `bugfix/lint-commitlint` | `fix(config): corregir exportación anónima…` |
-| BUG-07 | `bugfix/ci-pipeline` | `fix(ci): generar los tipos de ruta…` |
+| BUG-07 | `bugfix/ci-pipeline` | `fix(ci): generar los tipos de ruta…` (PR #1) |
+
+Las ramas de los módulos base se integraron antes de publicar el repositorio (historial construido en local). Desde la publicación, el 2026-10-27, **todo cambio entra por PR** con `main` protegida y los tres checks obligatorios (PRs #1, #2, #3, #22, #23, #24 y #25).
 
 ## Defectos del tablero
 

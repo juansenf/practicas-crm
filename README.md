@@ -6,6 +6,13 @@ Aplicación web para gestionar la relación con clientes de un estudio de desarr
 
 > Proyecto integrador de **Práctica Profesionalizante II** — Tecnicatura Superior en Desarrollo de Software (2026).
 
+| Enlace | URL |
+| --- | --- |
+| Aplicación en producción | <https://practicas-crm.vercel.app> |
+| Repositorio | <https://github.com/juansenf/practicas-crm> |
+| Tablero Kanban | <https://github.com/users/juansenf/projects/1> |
+| Documentación de la API | <https://practicas-crm.vercel.app/docs> |
+
 ---
 
 ## Índice
@@ -229,7 +236,7 @@ El archivo `.env` está en `.gitignore`; sólo se versiona `.env.example`. Las v
 | OPERADOR | `operador@nexo.local` | `Demo12345!` |
 | CLIENTE | `cliente@nexo.local` | `Demo12345!` |
 
-> Cambiar o eliminar estas cuentas antes de publicar el sistema.
+> Las cuentas están activas **a propósito** en la demo pública para que la cátedra pueda probar cada rol. En un entorno real se eliminan o se rotan sus contraseñas antes de publicar (ver [`docs/seguridad.md`](docs/seguridad.md#6-checklist-de-revisión-previa-a-producción)).
 
 ---
 

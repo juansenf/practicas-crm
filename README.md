@@ -1,5 +1,7 @@
 # Nexo · Mini CRM de clientes, proyectos y tareas
 
+[![CI](https://github.com/juansenf/practicas-crm/actions/workflows/ci.yml/badge.svg)](https://github.com/juansenf/practicas-crm/actions/workflows/ci.yml)
+
 Aplicación web para gestionar la relación con clientes de un estudio de desarrollo: **Clientes → Proyectos → Tareas**, con autenticación, control de acceso por roles, CRUD completo con baja lógica, validación en frontend y backend, y despliegue en la nube.
 
 > Proyecto integrador de **Práctica Profesionalizante II** — Tecnicatura Superior en Desarrollo de Software (2026).

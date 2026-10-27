@@ -1,0 +1,66 @@
+name: Historia de usuario
+description: Registrar una historia de usuario con criterios de aceptación.
+title: "HU-XX: "
+labels: ["historia"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Completá la historia siguiendo el formato del backlog (`docs/backlog.md`).
+
+  - type: input
+    id: epica
+    attributes:
+      label: Épica
+      description: Módulo o área a la que pertenece.
+      placeholder: Autenticación / Clientes / Proyectos / Tareas / Portal / Calidad
+    validations:
+      required: true
+
+  - type: textarea
+    id: historia
+    attributes:
+      label: Historia
+      description: Formato «Como… quiero… para…».
+      placeholder: Como integrante del estudio, quiero dar de baja un cliente, para conservar el historial sin perder información.
+    validations:
+      required: true
+
+  - type: textarea
+    id: criterios
+    attributes:
+      label: Criterios de aceptación
+      description: Lista verificable, en formato de checklist.
+      value: |
+        - [ ] 
+        - [ ] 
+        - [ ] 
+    validations:
+      required: true
+
+  - type: dropdown
+    id: prioridad
+    attributes:
+      label: Prioridad
+      options:
+        - Alta
+        - Media
+        - Baja
+    validations:
+      required: true
+
+  - type: input
+    id: puntos
+    attributes:
+      label: Estimación (puntos de historia)
+      placeholder: "1 a 5"
+    validations:
+      required: true
+
+  - type: textarea
+    id: notas
+    attributes:
+      label: Notas técnicas
+      description: Reglas de negocio, endpoints, dependencias o riesgos.
+    validations:
+      required: false
